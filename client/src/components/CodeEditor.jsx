@@ -10,7 +10,13 @@ const languageMap = {
 };
 
 const Editor = ({ initialInput = "", defaultLanguage = "cpp" }) => {
-  const [code, setCode] = useState("// Write your code here");
+  const [code, setCode] = useState(`#include <iostream>
+using namespace std;
+
+int main() {
+  // your code here
+  return 0;
+}`);
   const [language, setLanguage] = useState(defaultLanguage);
   const [loading, setLoading] = useState(false);
   const boilerplates = {
