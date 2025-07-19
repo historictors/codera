@@ -12,7 +12,6 @@ historictors/
 
 ## 🔗 Live Demo
 
-🌐 [LeetClone Live](https://your-deployment-link.com)
 
 ---
 
