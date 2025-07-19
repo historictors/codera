@@ -1,10 +1,3 @@
-historictors/
-├── .bolt/ # Bolt platform config
-├── server/ # Express backend
-├── src/ # React + TS frontend
-├── *.config.js/.json # Vite, Tailwind, TS config
-├── *.md # Setup + usage guides
-└── package.json # Dependencies & scripts# 💻 LeetClone – The Ultimate LeetCode Clone
 
 > 🚀 A full-stack coding platform where users can practice DSA, solve problems, and run code in real time — just like LeetCode!
 
@@ -58,4 +51,5 @@ historictors/
 ├── *.config.js/.json # Vite, Tailwind, TS config
 ├── *.md # Setup + usage guides
 └── package.json # Dependencies & scripts
+
 
