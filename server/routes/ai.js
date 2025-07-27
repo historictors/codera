@@ -8,8 +8,8 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 // OpenAI API configuration
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_BASE_URL = 'https://api.openai.com/v1';
+const OPENAI_API_KEY = '';
+const baseURL = 'https://api.openai.com/v1';
 
 // Code review and analysis
 router.post('/code-review', auth, async (req, res) => {
@@ -79,45 +79,47 @@ Keep the response concise but comprehensive.
 // Get personalized learning roadmap
 router.post('/roadmap', auth, async (req, res) => {
   try {
+    console.log('🌐 /roadmap request body:', req.body);
     const { goals, currentLevel, timeCommitment, preferredTopics } = req.body;
 
-    if (!OPENAI_API_KEY) {
-      return res.status(500).json({ message: 'AI service not configured' });
+    if (!goals?.length || !currentLevel || !timeCommitment) {
+      return res.status(400).json({ error: 'Missing fields in roadmap request' });
     }
 
     const user = await User.findById(req.user.userId);
-    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // ✅ Define the prompt here
     const prompt = `
-Create a personalized coding learning roadmap for a ${currentLevel} level programmer.
+You are a senior software mentor.
 
-User Profile:
-- Current Level: ${currentLevel}
-- Goals: ${goals.join(', ')}
-- Time Commitment: ${timeCommitment} hours per week
-- Preferred Topics: ${preferredTopics.join(', ')}
-- Problems Solved: ${user.stats.totalSolved}
-- Current Rating: ${user.stats.rating}
+Generate a detailed 4-week learning roadmap for someone at the ${currentLevel} level with the following goals:
+- ${goals.join(', ')}
 
-Please provide:
-1. A structured learning path with milestones
-2. Recommended topics and concepts to study
-3. Practice problem categories and difficulty progression
-4. Estimated timeline for each phase
-5. Resources and tips for effective learning
+They can commit ${timeCommitment} hours per day to learning.
+Preferred topics include: ${preferredTopics.join(', ')}.
 
-Format as a detailed roadmap with clear phases and actionable steps.
-    `;
+Break down the roadmap by week, suggest resources, and include exercises.
+Make it personalized, practical, and progressive.
+`;
+
+    console.log('📄 roadmap prompt:', prompt);
 
     const response = await callOpenAI(prompt, 'roadmap');
+    console.log('✅ OpenAI response:', response);
 
     const interaction = new AIInteraction({
       user: req.user.userId,
       type: 'roadmap',
       context: {
-        userLevel: currentLevel,
-        goals
+        goals,
+        currentLevel,
+        timeCommitment,
+        preferredTopics
       },
-      query: 'Personalized roadmap request',
+      query: 'Roadmap generation request',
       response: response.content,
       tokens_used: response.usage?.total_tokens || 0,
       response_time: response.response_time
@@ -127,13 +129,13 @@ Format as a detailed roadmap with clear phases and actionable steps.
 
     res.json({
       roadmap: response.content,
-      phases: extractRoadmapPhases(response.content),
-      estimatedDuration: extractDuration(response.content)
+      duration: extractDuration(response.content),
+      phases: extractRoadmapPhases(response.content)
     });
 
   } catch (error) {
-    console.error('Roadmap generation error:', error);
-    res.status(500).json({ message: 'Failed to generate roadmap' });
+    console.error('⚠️ /roadmap route error:', error.response?.data || error);
+    res.status(500).json({ error: 'Roadmap failed', details: error.message });
   }
 });
 
@@ -324,7 +326,7 @@ async function callOpenAI(prompt, type) {
   
   try {
     const response = await axios.post(
-      `${OPENAI_BASE_URL}/chat/completions`,
+      `${baseURL}/chat/completions`,
       {
         model: 'gpt-3.5-turbo',
         messages: [

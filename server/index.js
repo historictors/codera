@@ -16,11 +16,11 @@ const arenaRoutes = require('./routes/arena');
 const userRoutes = require('./routes/users');
 const contestRoutes = require('./routes/contests');
 const aiRoutes = require('./routes/ai');
+dotenv.config();
 
 // Import socket handlers
 const socketHandler = require('./socket/socketHandler');
 
-dotenv.config();
 
 const app = express();
 const server = createServer(app);
