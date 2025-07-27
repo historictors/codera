@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+dotenv.config();
 // Import routes
 const authRoutes = require('./routes/auth');
 const problemRoutes = require('./routes/problems');
@@ -16,7 +17,6 @@ const arenaRoutes = require('./routes/arena');
 const userRoutes = require('./routes/users');
 const contestRoutes = require('./routes/contests');
 const aiRoutes = require('./routes/ai');
-dotenv.config();
 
 // Import socket handlers
 const socketHandler = require('./socket/socketHandler');

@@ -8,7 +8,7 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 // OpenAI API configuration
-const OPENAI_API_KEY = '';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const baseURL = 'https://api.openai.com/v1';
 
 // Code review and analysis
@@ -20,15 +20,16 @@ router.post('/code-review', auth, async (req, res) => {
       return res.status(500).json({ message: 'AI service not configured' });
     }
 
-    const problem = await Problem.findById(problemId);
-    if (!problem) {
-      return res.status(404).json({ message: 'Problem not found' });
-    }
-
+    // const problem = await Problem.findById(problemId);
+    // if (!problem) {
+    //   return res.status(404).json({ message: 'Problem not found' });
+    // }
+    console.log(`${language} code ==> ${code}`);
+    
     const prompt = `
-As a coding mentor, review this ${language} code for the problem "${problem.title}":
+As a coding mentor, review this ${language} code for the problem "":
 
-Problem Description: ${problem.description.replace(/<[^>]*>/g, '')}
+Problem Description: ${code.replace(/<[^>]*>/g, '')}
 
 Code:
 \`\`\`${language}
@@ -71,8 +72,8 @@ Keep the response concise but comprehensive.
     });
 
   } catch (error) {
-    console.error('Code review error:', error);
-    res.status(500).json({ message: 'Failed to analyze code' });
+   console.error('⚠️ /roadmap route error:', error.response?.data || error);
+    res.status(500).json({ error: 'Roadmap failed', details: error.message });
   }
 });
 
@@ -90,7 +91,6 @@ router.post('/roadmap', auth, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
     // ✅ Define the prompt here
     const prompt = `
 You are a senior software mentor.
