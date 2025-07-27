@@ -75,20 +75,28 @@ export const AIAssistant: React.FC = () => {
   };
 
   const handleCodeReview = async () => {
-    if (!codeReview.code.trim()) {
+    console.log(codeReview.code);
+    
+    if (!codeReview.code) {
       toast.error('Please enter code to review');
       return;
     }
 
     try {
       setLoading(true);
+      
       const response = await aiAPI.reviewCode({
         code: codeReview.code,
         language: codeReview.language,
-        problemId: codeReview.problemId || undefined
+        problemId: codeReview.problemId ? codeReview.problemId as string : undefined
       });
+      console.log(response);
       
-      setCodeReview(prev => ({ ...prev, result: response.data }));
+      setCodeReview(prev => {
+        console.log(prev);
+        
+        return { ...prev, result: response.data }
+      });
       toast.success('Code review completed!');
     } catch (error) {
       toast.error('Failed to review code');
