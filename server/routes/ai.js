@@ -73,14 +73,15 @@ Keep the response concise but comprehensive.
 
   } catch (error) {
    console.error('⚠️ /roadmap route error:', error.response?.data || error);
-    res.status(500).json({ error: 'Roadmap failed', details: error.message });
+   res.send('ERROR')
+   res.status(500)
   }
 });
 
 // Get personalized learning roadmap
 router.post('/roadmap', auth, async (req, res) => {
   try {
-    console.log('🌐 /roadmap request body:', req.body);
+    // console.log('🌐 /roadmap request body:', req.body);
     const { goals, currentLevel, timeCommitment, preferredTopics } = req.body;
 
     if (!goals?.length || !currentLevel || !timeCommitment) {
@@ -105,10 +106,10 @@ Break down the roadmap by week, suggest resources, and include exercises.
 Make it personalized, practical, and progressive.
 `;
 
-    console.log('📄 roadmap prompt:', prompt);
+    // console.log('📄 roadmap prompt:', prompt);
 
+    // console.log('✅ OpenAI response:', response);
     const response = await callOpenAI(prompt, 'roadmap');
-    console.log('✅ OpenAI response:', response);
 
     const interaction = new AIInteraction({
       user: req.user.userId,
@@ -135,7 +136,10 @@ Make it personalized, practical, and progressive.
 
   } catch (error) {
     console.error('⚠️ /roadmap route error:', error.response?.data || error);
-    res.status(500).json({ error: 'Roadmap failed', details: error.message });
+    res.send('ERROR')
+    res.status(500)
+    
+    
   }
 });
 

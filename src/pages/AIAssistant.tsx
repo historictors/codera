@@ -93,11 +93,10 @@ export const AIAssistant: React.FC = () => {
       console.log(response);
       
       setCodeReview(prev => {
-        console.log(prev);
-        
         return { ...prev, result: response.data }
       });
-      toast.success('Code review completed!');
+      if(codeReview.result =='ERROR' || codeReview.result == null) toast.error('Failed to review code')
+        else toast.success('Code review completed!');
     } catch (error) {
       toast.error('Failed to review code');
     } finally {
@@ -116,7 +115,8 @@ export const AIAssistant: React.FC = () => {
       const response = await aiAPI.getRoadmap(roadmapForm);
       
       setRoadmapForm(prev => ({ ...prev, result: response.data }));
-      toast.success('Roadmap generated!');
+      if(roadmapForm.result == 'ERROR') toast.error('Failed to generate roadmap')
+      else toast.success('Roadmap generated!');
     } catch (error) {
       toast.error('Failed to generate roadmap');
     } finally {
@@ -273,7 +273,7 @@ export const AIAssistant: React.FC = () => {
                   <div className="bg-gray-700 rounded-lg p-6">
                     <h4 className="text-lg font-semibold text-white mb-4">Review Results</h4>
                     <div className="prose prose-invert max-w-none">
-                      <div className="whitespace-pre-wrap text-gray-300">{codeReview.result.review}</div>
+                      <div className="whitespace-pre-wrap text-gray-300">{codeReview.result.review?codeReview.result.review:"limit Exceede"}</div>
                     </div>
                     
                     {codeReview.result.suggestions && codeReview.result.suggestions.length > 0 && (
@@ -401,7 +401,8 @@ export const AIAssistant: React.FC = () => {
                   <div className="bg-gray-700 rounded-lg p-6">
                     <h4 className="text-lg font-semibold text-white mb-4">Your Learning Roadmap</h4>
                     <div className="prose prose-invert max-w-none">
-                      <div className="whitespace-pre-wrap text-gray-300">{roadmapForm.result.roadmap}</div>
+                      <div className="whitespace-pre-wrap text-gray-300">{roadmapForm.result.roadmap?roadmapForm.result.roadmap:"Limit EXceede"}</div>
+                      
                     </div>
                   </div>
                 )}
